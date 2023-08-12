@@ -7,7 +7,7 @@ export default function SidebarButton({ href, holder }: {
     return (
         <Link
             href={href}
-            className="block py-2 px-3 rounded transition duration-300 hover:bg-orange-200"
+            className="block py-2 px-3 rounded transition duration-300 font-medium hover:bg-orange-200"
         >
             {holder}
         </Link>

@@ -4,7 +4,7 @@ export default function MyPage() {
     return (
         <>
             <div className="flex flex-col h-screen">
-                <div className="bg-white shadow-md p-4">
+                <div className="bg-white shadow-md p-4 rounded-lg">
                     <h2 className="text-lg font-semibold mb-4">待办会议</h2>
                     <ul>
                         <li className="flex items-center space-x-2 mb-2">
@@ -18,7 +18,7 @@ export default function MyPage() {
                     </ul>
                 </div>
 
-                <div className="bg-white mt-4 shadow-md p-4">
+                <div className="bg-white mt-4 shadow-md p-4 rounded-lg">
                     <h2 className="text-lg font-semibold mb-4">历史会议</h2>
                     <ul>
                         <li className="flex items-center mb-2 justify-between">
