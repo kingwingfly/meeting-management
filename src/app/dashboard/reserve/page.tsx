@@ -1,7 +1,7 @@
 export default function ReservePage() {
     return (
         <>
-            <div className="max-w-md mx-auto bg-white p-6 shadow-md mt-10 rounded-lg">
+            <div className="max-w-md mx-auto bg-white p-6 shadow-md mt-10 rounded-lg dark:text-black">
                 <h1 className="text-2xl font-semibold mb-4">提交会议信息</h1>
 
                 <form>

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function MyPage() {
     return (
         <>
-            <div className="flex flex-col h-screen">
+            <div className="flex flex-col h-screen dark:text-black">
                 <div className="bg-white shadow-md p-4 rounded-lg">
                     <h2 className="text-lg font-semibold mb-4">待办会议</h2>
                     <ul>

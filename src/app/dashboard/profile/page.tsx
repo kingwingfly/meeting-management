@@ -9,7 +9,7 @@ export default async function ProfilePage() {
     const image = session?.user?.image;
     return (
         <>
-            <div className="flex flex-col items-center min-h-screen">
+            <div className="flex flex-col items-center min-h-screen dark:text-black">
                 <div className="bg-white rounded-lg shadow-md p-8 max-w-md min-w-full">
                     <div className="mb-4"></div>
                     <h1 className="text-gray-600 text-2xl font-semibold mb-2">{name ? name : "unknown"}</h1>
