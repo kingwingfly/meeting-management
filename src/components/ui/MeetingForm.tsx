@@ -2,9 +2,11 @@
 
 import { QueryResultRow } from "@vercel/postgres"
 import { FormEvent, useState } from "react"
+import MeetingsChoose from "./MeetingsChoose";
+
 
 export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
-    const [ret, setRet] = useState({ result: false });
+    const [ret, setRet] = useState({ result: false, chooses: {} });
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         let duration = (event.currentTarget['duration'] as HTMLInputElement).value;
@@ -22,7 +24,7 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
         });
         if (resp.ok) {
             console.log('Data sent successfully.');
-            setRet({ ...ret, ...(await resp.json()) });
+            setRet({ result: true, ...(await resp.json()) });
             // You can handle successful response here
         } else {
             console.error('Failed to send data.');
@@ -30,7 +32,7 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
         }
     }
     if (ret.result) {
-        return <h1>{ret.result}</h1>
+        return <MeetingsChoose chooses={ret.chooses} />
     }
     return (
         <>
@@ -47,7 +49,7 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
                         <select id="participants" name="participants" className="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300" multiple required >
                             {rows.map((row) => {
                                 return (
-                                    <option key={row.name} value={row.name}>{row.name}</option>
+                                    <option key={row.id} value={row.id}>{row.name}</option>
                                 )
                             })}
                         </select>

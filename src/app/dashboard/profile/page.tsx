@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { options as authOptions } from "../../api/auth/[...nextauth]/options"
 
+
 export default async function ProfilePage() {
     const session = await getServerSession(authOptions);
     const name = session?.user?.name;
