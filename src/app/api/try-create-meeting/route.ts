@@ -7,11 +7,12 @@ export async function POST(req: NextRequest) {
     const runWasm = async () => {
         console.log(meeting_info);
         const ocs = newOcs();
-        meeting_info.participants.map(async (id) => {
-            return (await sql`SELECT occupied FROM occupied WHERE user_id=${id};`)
-        }).forEach(async (occupied) => {
-            ocs.ocs.push((await occupied).rows as any);
-        })
+        const participantIds = meeting_info.participants.join(',');
+        ocs.ocs = (await sql`
+            SELECT occupied
+            FROM occupied
+            WHERE user_id IN (${participantIds});
+        `).rows;
         return arrange(ocs, Number(meeting_info.duration));
     };
     return NextResponse.json({ chooses: await runWasm() })

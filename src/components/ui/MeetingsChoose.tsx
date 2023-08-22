@@ -1,6 +1,5 @@
 import { add, parse, format } from "date-fns";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { FormEvent, MouseEvent, SetStateAction, useState } from "react";
 
 export default function MeetingsChoose({ chooses, postedData }: {
