@@ -4,9 +4,10 @@ use std::collections::HashSet;
 use wasm_bindgen::prelude::*;
 
 pub fn duration_from_start() -> usize {
-    let start = Utc.with_ymd_and_hms(2023, 8, 21, 0, 0, 0).unwrap();
+    let start = Local.with_ymd_and_hms(2023, 8, 21, 0, 0, 0).unwrap();
     let now = Local::now();
-    let duration = now.signed_duration_since(start).num_hours();
+    println!("start {:?}; now {:?}", start, now);
+    let duration = now.signed_duration_since(start).num_hours() + 1;
     duration as usize
 }
 
@@ -15,7 +16,7 @@ struct OcsImpl {
     ocs: Vec<Vec<usize>>,
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "newOcs")]
 pub fn new_ocs() -> JsValue {
     serde_wasm_bindgen::to_value(&OcsImpl { ocs: vec![vec![]] }).unwrap()
 }
@@ -31,7 +32,7 @@ pub fn arrange(ocs: JsValue, duration: usize) -> Vec<usize> {
     let ret: Vec<_> = (duration_from_start..=(duration_from_start + 72))
         .filter(|&l| {
             let clock = l % 24;
-            8 <= clock && clock <= 18 - duration
+            8 <= clock && clock <= std::cmp::max(18 - duration, 7)
         })
         .filter(|&l| {
             let r = l + duration;
@@ -41,23 +42,13 @@ pub fn arrange(ocs: JsValue, duration: usize) -> Vec<usize> {
     ret
 }
 
-#[wasm_bindgen(js_name = "addDate")]
-pub fn add_date(duration: usize) -> String {
-    let start = Utc.with_ymd_and_hms(2023, 8, 21, 0, 0, 0).unwrap();
-    start
-        .checked_add_signed(chrono::Duration::hours(duration as i64))
-        .unwrap()
-        .to_string()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test1() {
-        duration_from_start();
-        let ret = add_date(10);
-        println!("{ret}");
+        let duration = duration_from_start();
+        println!("{duration}");
     }
 }

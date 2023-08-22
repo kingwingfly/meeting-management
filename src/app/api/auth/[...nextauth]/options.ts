@@ -16,7 +16,7 @@ export const options: NextAuthOptions = {
                 password: { label: "Password", type: "password", placeholder: "your password" }
             },
             async authorize(credentials, req) {
-                const password = await sql`SELECT Password FROM Users WHERE Name=${credentials?.username} LIMIT 1;`;
+                const password = await sql`SELECT password FROM Users WHERE Name=${credentials?.username} LIMIT 1;`;
                 if (credentials?.password === password.rows[0].password) {
                     const user = { id: "0", name: credentials?.username }
                     return user

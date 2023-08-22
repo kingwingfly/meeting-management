@@ -6,7 +6,7 @@ import MeetingsChoose from "./MeetingsChoose";
 
 
 export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
-    const [ret, setRet] = useState({ result: false, chooses: {} });
+    const [ret, setRet] = useState({ loaded: false, chooses: {}, postedData: {} });
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         let duration = (event.currentTarget['duration'] as HTMLInputElement).value;
@@ -15,7 +15,7 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
         let postData = {
             duration, participants, meetingType
         };
-        const resp = await fetch("/api/create-meeting", {
+        const resp = await fetch("/api/try-create-meeting", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -24,15 +24,17 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
         });
         if (resp.ok) {
             console.log('Data sent successfully.');
-            setRet({ result: true, ...(await resp.json()) });
+            setRet({ postedData: postData, loaded: true, ...(await resp.json()) });
             // You can handle successful response here
         } else {
             console.error('Failed to send data.');
             // You can handle error cases here
         }
     }
-    if (ret.result) {
-        return <MeetingsChoose chooses={ret.chooses} />
+    if (ret.loaded) {
+        return (
+            <MeetingsChoose chooses={ret.chooses} postedData={ret.postedData as { duration: number, participants: number[], meetingType: string }} />
+        )
     }
     return (
         <>
@@ -40,8 +42,8 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
                 <h1 className="text-2xl font-semibold mb-4">提交会议信息</h1>
                 <form onSubmit={e => handleSubmit(e)}>
                     <div className="mb-4">
-                        <label htmlFor="duration" className="block font-medium mb-1">持续时间</label>
-                        <input type="text" id="duration" name="duration" className="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300" placeholder="例如：1小时30分钟" required />
+                        <label htmlFor="duration" className="block font-medium mb-1">持续时间(h)</label>
+                        <input type="text" id="duration" name="duration" className="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300" placeholder="整数" required />
                     </div>
 
                     <div className="mb-4">
