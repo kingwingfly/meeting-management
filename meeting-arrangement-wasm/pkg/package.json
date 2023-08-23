@@ -1,0 +1,16 @@
+{
+  "name": "meeting-arrangement-wasm",
+  "version": "0.1.0",
+  "files": [
+    "meeting_arrangement_wasm_bg.wasm",
+    "meeting_arrangement_wasm.js",
+    "meeting_arrangement_wasm_bg.js",
+    "meeting_arrangement_wasm.d.ts"
+  ],
+  "module": "meeting_arrangement_wasm.js",
+  "types": "meeting_arrangement_wasm.d.ts",
+  "sideEffects": [
+    "./meeting_arrangement_wasm.js",
+    "./snippets/*"
+  ]
+}
