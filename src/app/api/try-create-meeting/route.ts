@@ -15,9 +15,12 @@ export async function POST(req: NextRequest) {
             WHERE id IN (${participantIds});
         `;
         ocs.ocs = (await client.query(sql_)).rows.map((row) => row.occupied);
+        console.log(ocs.ocs);
         return arrange(ocs, Number(meeting_info.duration));
     };
-    return NextResponse.json({ chooses: await runWasm() })
+    let ret = await runWasm();
+    console.log(ret);
+    return NextResponse.json({ chooses: ret })
 }
 
 interface MeetingInfo {

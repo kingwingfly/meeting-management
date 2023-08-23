@@ -49,12 +49,12 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
     }
     return (
         <>
-            <div className="max-w-md mx-auto bg-white p-6 shadow-md mt-10 rounded-lg dark:text-black">
+            <div className="max-w-md mx-auto bg-white dark:bg-gray-500 dark:text-white p-6 shadow-md mt-10 rounded-lg">
                 <h1 className="text-2xl font-semibold mb-4">提交会议信息</h1>
                 <form onSubmit={e => handleSubmit(e)}>
                     <div className="mb-4">
                         <label htmlFor="duration" className="block font-medium mb-1">持续时间(h)</label>
-                        <input type="text" id="duration" name="duration" className="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300" placeholder="整数" required />
+                        <input type="text" id="duration" name="duration" className="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300 dark:bg-gray-600 dark:text-white" placeholder="正整数" required />
                     </div>
 
                     <div className="mb-4">
@@ -78,7 +78,7 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
 
                     <div className="mb-4">
                         <label htmlFor="meetingType" className="block font-medium mb-1">会议方式</label>
-                        <select id="meetingType" name="meetingType" className="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300" required >
+                        <select id="meetingType" name="meetingType" className="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300 dark:bg-gray-600 dark:text-white" required >
                             <option value="" disabled>选择会议方式</option>
                             <option value="in-person">面对面</option>
                             <option value="virtual">虚拟会议</option>

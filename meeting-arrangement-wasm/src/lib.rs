@@ -20,7 +20,7 @@ fn date_from_start(date: &str) -> usize {
         .from_local_datetime(&naive_datetime)
         .single()
         .expect("Invalid date and time");
-    let duration = local_datetime.signed_duration_since(start).num_hours() + 1;
+    let duration = local_datetime.signed_duration_since(start).num_hours();
     duration as usize
 }
 
@@ -42,14 +42,14 @@ pub fn arrange(ocs: JsValue, duration: usize) -> Vec<usize> {
     for v in ocs_impl.ocs.into_iter() {
         set.extend(v.into_iter().collect::<HashSet<usize>>())
     }
-    let ret: Vec<_> = (duration_from_start..=(duration_from_start + 72))
+    let ret: Vec<_> = (duration_from_start..(duration_from_start + 72))
         .filter(|&l| {
             let clock = l % 24;
             8 <= clock && clock <= std::cmp::max(18 - duration, 7)
         })
         .filter(|&l| {
             let r = l + duration;
-            !set.iter().any(|&i| l < i && i < r)
+            !set.iter().any(|&i| l <= i && i < r)
         })
         .collect();
     ret
@@ -80,9 +80,10 @@ pub fn gen_sql(create_data: JsValue) -> JsValue {
 INSERT INTO occupied (id, occupied)
 VALUES ({id}, ARRAY{occupied:?})
 ON CONFLICT (id)
-DO UPDATE SET occupied = ARRAY(SELECT DISTINCT unnest(occupied) FROM occupied
-UNION
-SELECT unnest(ARRAY{occupied:?}));
+DO UPDATE SET occupied = array_cat(
+    occupied.occupied,
+    excluded.occupied
+);
             "#
         );
         ret.push_str(&new);

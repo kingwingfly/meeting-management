@@ -20,11 +20,15 @@ export default function MeetingCard({ meeting, user_id }: { meeting: Meeting, us
                 body: JSON.stringify({
                     meeting_id: meeting.meeting_id,
                     user_id: user_id,
+                    duration: meeting.duration,
+                    date_time: meeting.date_time,
                 })
             })
-            let result = (await resp.json()).result;
+            let result = (await resp.json()).result as boolean;
             setIsDeleting(false);
-            result ? window.location.reload() : {};
+            if (result) {
+                window.location.reload()
+            }
         }
     }
     return (
@@ -41,7 +45,7 @@ export default function MeetingCard({ meeting, user_id }: { meeting: Meeting, us
                 <Link href={`/dashboard/details/${meeting.meeting_id}`} className="bg-blue-500 text-white px-3 py-1 rounded mr-2">
                     Details
                 </Link>
-                <button disabled={isDeleting} onClick={(e) => handleDelete(e)} className={`${isDeleting ? "bg-gray-500" : "bg-red-500"} text-white px-3 py-1 rounded`}>
+                <button disabled={isDeleting} onClick={(e) => handleDelete(e)} className={`${isDeleting ? "bg-gray-500" : "bg-red-500"} text-white px-3 py-1 rounded w-44`}>
                     {isDeleting ? "Deleting..." : (isSecond ? "Click Again" : "Remove From Mine")}
                 </button>
             </div>

@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
 INSERT INTO users_meetings (id, meetings)
 VALUES (${id}, ARRAY[${meeting_id}])
 ON CONFLICT (id)
-DO UPDATE SET meetings = ARRAY(SELECT DISTINCT unnest(meetings) FROM users_meetings
-UNION
-SELECT unnest(ARRAY[${meeting_id}]));`;
+DO UPDATE SET meetings = ARRAY(
+    SELECT DISTINCT unnest(array_cat(users_meetings.meetings, ARRAY[${meeting_id}]))
+);`;
                 console.log(sql2);
                 return client.query(sql2);
             })

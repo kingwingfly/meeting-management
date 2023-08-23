@@ -66,15 +66,15 @@ export default function MeetingsChoose({ chooses, postedData }: {
     }
     return (
         <div className="flex flex-col h-screen">
-            <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
+            <div className="max-w-md mx-auto bg-white dark:bg-gray-500 p-6 rounded shadow">
                 <h1 className="text-2xl font-bold mb-4">选择时间</h1>
                 <form onSubmit={(e) => handleSubmit(e)} className="">
                     <div className="space-y-4">
                         <label className="block">
-                            <span className="text-gray-700">选择时间：</span>
+                            <span className="text-gray-700 dark:text-white">选择时间：</span>
                             <input
                                 type="datetime-local"
-                                className="border rounded px-2 py-1 w-full text-base"
+                                className="border rounded px-2 py-1 w-full text-base dark:bg-gray-500 dark:text-white"
                                 value={selectedDateTime}
                                 onChange={handleDateTimeChange}
                             />
@@ -82,10 +82,10 @@ export default function MeetingsChoose({ chooses, postedData }: {
                     </div>
                     <div className="space-y-4">
                         <label className="block">
-                            <span className="text-gray-700">会议描述：</span>
+                            <span className="text-gray-700 dark:text-white">会议描述：</span>
                             <input
                                 type="text"
-                                className="border rounded px-2 py-1 w-full text-base"
+                                className="border rounded px-2 py-1 w-full text-base dark:bg-gray-500 dark:text-white"
                                 value={desc}
                                 onChange={handleDescChange}
                             />
@@ -106,12 +106,12 @@ export default function MeetingsChoose({ chooses, postedData }: {
             <div className="grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-y-scroll flex-grow">
                 {Object.values(chooses).map((duration) => (
                     <div key={duration} className="choose">
-                        <div className="p-2 bg-white rounded hover:shadow hover:bg-gray-50 text-center cursor-pointer" onClick={(e) => handleDateClick(e)}>
+                        <div className="p-2 bg-white rounded hover:shadow hover:bg-gray-50 text-center cursor-pointer dark:bg-gray-500 dark:text-white dark:hover:bg-gray-400" onClick={(e) => handleDateClick(e)}>
                             <div className="text-lg font-semibold m-1">
                                 {add(date, { hours: duration }).toLocaleString()}
                             </div>
                         </div>
-                        <div className="p-2 bg-white rounded shadow hover:bg-gray-50 text-center cursor-pointer" onClick={(e) => handleDateClick(e)}>
+                        <div className="p-2 bg-white rounded shadow hover:bg-gray-50 text-center cursor-pointer dark:bg-gray-500 dark:text-white dark:hover:bg-gray-400" onClick={(e) => handleDateClick(e)}>
                             <div className="text-lg font-semibold m-1">
                                 {add(date, { hours: duration, minutes: 30 }).toLocaleString()}
                             </div>
