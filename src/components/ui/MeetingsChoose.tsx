@@ -1,6 +1,7 @@
 import { add, parse, format } from "date-fns";
 import Link from "next/link";
-import { FormEvent, MouseEvent, SetStateAction, use, useState } from "react";
+import { FormEvent, MouseEvent, SetStateAction, useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 
 export default function MeetingsChoose({ chooses, postedData }: {
     chooses: { [key: string]: number },
@@ -44,10 +45,13 @@ export default function MeetingsChoose({ chooses, postedData }: {
                     duration: postedData.duration,
                     participants: postedData.participants,
                 })
-            })
+            });
             setIsCreated((await resp.json()).result);
         }
     }
+    useEffect(() => {
+        redirect("/dashboard/my")
+    })
     if (isCreated) {
         return (
             <div className="flex items-center justify-center h-screen">
