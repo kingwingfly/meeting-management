@@ -1,6 +1,6 @@
 import { add, parse, format } from "date-fns";
 import Link from "next/link";
-import { FormEvent, MouseEvent, SetStateAction, useState } from "react";
+import { FormEvent, MouseEvent, SetStateAction, use, useState } from "react";
 
 export default function MeetingsChoose({ chooses, postedData }: {
     chooses: { [key: string]: number },
@@ -8,12 +8,18 @@ export default function MeetingsChoose({ chooses, postedData }: {
 }) {
     let date = new Date(2023, 7, 21, 0, 0, 0);
     const [selectedDateTime, setSelectedDateTime] = useState('');
+    const [desc, setDesc] = useState('');
     const [isSencondClick, setIsSecondClick] = useState(false);
+    const [creating, setCreating] = useState(false);
     const [isCreated, setIsCreated] = useState(false);
     const handleDateTimeChange = (event: { target: { value: SetStateAction<string>; }; }) => {
         setSelectedDateTime(event.target.value);
         setIsSecondClick(false);
     };
+    const handleDescChange = (event: { target: { value: SetStateAction<string>; }; }) => {
+        setDesc(event.target.value);
+        setIsSecondClick(false);
+    }
     const handleDateClick = (event: MouseEvent<HTMLDivElement>) => {
         event.preventDefault();
         let temp = event.currentTarget.textContent as string;
@@ -26,6 +32,7 @@ export default function MeetingsChoose({ chooses, postedData }: {
         event.preventDefault();
         setIsSecondClick(old => !old);
         if (isSencondClick) {
+            setCreating(true);
             let resp = await fetch("/api/create-meeting", {
                 method: "POST",
                 headers: {
@@ -33,6 +40,7 @@ export default function MeetingsChoose({ chooses, postedData }: {
                 },
                 body: JSON.stringify({
                     date: selectedDateTime,
+                    desc: desc,
                     duration: postedData.duration,
                     participants: postedData.participants,
                 })
@@ -42,8 +50,17 @@ export default function MeetingsChoose({ chooses, postedData }: {
     }
     if (isCreated) {
         return (
-            <div className="flex items-center justify-center h-screen rounded-lg">
-                <Link href="/dashboard/my" className="max-w-md mx-auto bg-white p-6 rounded hover:shadow">创建成功！点击查看会议列表</Link>
+            <div className="flex items-center justify-center h-screen">
+                <div className="bg-blue-500 text-white p-8 rounded-lg shadow-lg">
+                    <p className="text-2xl font-bold mb-4">创建成功！</p>
+                    <p className="mb-4">会议时间：{selectedDateTime}</p>
+                    <Link
+                        href="/dashboard/my"
+                        className="block bg-white text-blue-500 hover:bg-blue-100 px-4 py-2 rounded transition duration-300"
+                    >
+                        点击查看会议列表
+                    </Link>
+                </div>
             </div>
         )
     }
@@ -63,9 +80,20 @@ export default function MeetingsChoose({ chooses, postedData }: {
                             />
                         </label>
                     </div>
+                    <div className="space-y-4">
+                        <label className="block">
+                            <span className="text-gray-700">会议描述：</span>
+                            <input
+                                type="text"
+                                className="border rounded px-2 py-1 w-full text-base"
+                                value={desc}
+                                onChange={handleDescChange}
+                            />
+                        </label>
+                    </div>
                     <div className="mt-1 flex justify-center">
-                        <button type="submit" className={`"mt-4 ${isSencondClick ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"} text-white font-semibold py-2 px-4 rounded mx-auto dark:text-white"`}>
-                            {isSencondClick ? '确认' : '提交'}
+                        <button disabled={creating} type="submit" className={`"mt-4 ${creating ? "bg-gray-500" : (isSencondClick ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600")} text-white font-semibold py-2 px-4 rounded mx-auto dark:text-white"`}>
+                            {creating ? '正在创建...' : (isSencondClick ? '确认' : '提交')}
                         </button>
                     </div>
                 </form>

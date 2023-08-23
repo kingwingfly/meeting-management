@@ -1,16 +1,27 @@
 'use client'
 
-import { QueryResultRow } from "@vercel/postgres"
-import { FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useState } from "react"
 import MeetingsChoose from "./MeetingsChoose";
+import { QueryResultRow } from "@vercel/postgres";
 
 
 export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
     const [ret, setRet] = useState({ loaded: false, chooses: {}, postedData: {} });
+    const [selectedParticipants, setSelectedParticipants] = useState<number[]>([]);
+    const [submitting, setSubmitting] = useState(false);
+    const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const selectedValue = parseInt(event.target.value);
+        if (event.target.checked) {
+            setSelectedParticipants((prevSelected) => [...prevSelected, selectedValue]);
+        } else {
+            setSelectedParticipants((prevSelected) => prevSelected.filter((value) => value !== selectedValue));
+        }
+    };
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        setSubmitting(true);
         let duration = (event.currentTarget['duration'] as HTMLInputElement).value;
-        let participants = Array.from(event.currentTarget['participants'].selectedOptions).map((option) => (option as HTMLOptionElement).value);
+        let participants = selectedParticipants;
         let meetingType = (event.currentTarget['meetingType'] as HTMLSelectElement).value;
         let postData = {
             duration, participants, meetingType
@@ -47,14 +58,22 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
                     </div>
 
                     <div className="mb-4">
-                        <label htmlFor="participants" className="block font-medium mb-1" >参与者</label>
-                        <select id="participants" name="participants" className="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300" multiple required >
-                            {rows.map((row) => {
-                                return (
-                                    <option key={row.id} value={row.id}>{row.name}</option>
-                                )
-                            })}
-                        </select>
+                        <label className="block font-medium mb-1">参与者</label>
+                        <div className="space-y-2">
+                            {rows.map((row) => (
+                                <label key={row.id} className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="participants"
+                                        value={row.id}
+                                        onChange={(e) => handleCheckboxChange(e)}
+                                        checked={selectedParticipants.includes(row.id)}
+                                        className="mr-2 border rounded focus:ring focus:ring-blue-300"
+                                    />
+                                    {row.name}
+                                </label>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="mb-4">
@@ -68,11 +87,10 @@ export default function MeetingForm({ rows }: { rows: QueryResultRow[] }) {
                     </div>
                     <div className=" border-t pt-4"></div>
                     <div className="flex justify-center">
-                        <button type="submit" className="px-4 py-2 items-center rounded-lg border shadow-sm text-black bg-gray-100 hover:bg-gray-50">提交</button>
+                        <button disabled={submitting} type="submit" className="px-4 py-2 items-center rounded-lg border shadow-sm text-black bg-gray-100 hover:bg-gray-50">{submitting ? "正在提交..." : "提交"}</button>
                     </div>
                 </form>
             </div>
         </>
     )
 }
-

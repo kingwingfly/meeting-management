@@ -12,7 +12,7 @@ fn duration_from_start() -> usize {
     duration as usize
 }
 
-fn date_from_start(date: String) -> usize {
+fn date_from_start(date: &str) -> usize {
     let start = Local.with_ymd_and_hms(2023, 8, 21, 0, 0, 0).unwrap();
     let naive_datetime =
         NaiveDateTime::parse_from_str(&date, "%Y-%m-%d %H:%M").expect("Invalid date format");
@@ -55,38 +55,51 @@ pub fn arrange(ocs: JsValue, duration: usize) -> Vec<usize> {
     ret
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 struct CreateData {
     date: String,
+    desc: String,
     duration: usize,
-    participants: Vec<String>,
+    participants: Vec<usize>,
 }
 
 #[wasm_bindgen(js_name = "newGenSqlData")]
 pub fn new_sql_gen_data() -> JsValue {
-    serde_wasm_bindgen::to_value(&CreateData {
-        date: "".to_string(),
-        duration: 0,
-        participants: vec![],
-    })
-    .unwrap()
+    serde_wasm_bindgen::to_value(&CreateData::default()).unwrap()
 }
 
 #[wasm_bindgen(js_name = "genSqls")]
 pub fn gen_sql(create_data: JsValue) -> JsValue {
     let create_data: CreateData = serde_wasm_bindgen::from_value(create_data).unwrap();
-    let duration = date_from_start(create_data.date);
+    let duration = date_from_start(&create_data.date);
     let occupied: Vec<usize> = (duration..(duration + create_data.duration)).collect();
-    let ret: Vec<String> = create_data
-        .participants
-        .iter()
-        .map(|id| {
-            format!(
-                "UPDATE occupied SET occupied=array_cat(occupied, ARRAY{:?}) WHERE id={id};",
-                occupied
-            )
-        })
-        .collect();
+    let mut ret = String::new();
+    create_data.participants.iter().for_each(|id| {
+        let new = format!(
+            r#"
+INSERT INTO occupied (id, occupied)
+VALUES ({id}, ARRAY{occupied:?})
+ON CONFLICT (id)
+DO UPDATE SET occupied = ARRAY(SELECT DISTINCT unnest(occupied) FROM occupied
+UNION
+SELECT unnest(ARRAY{occupied:?}));
+            "#
+        );
+        ret.push_str(&new);
+    });
+    let add_meeting_sql = format!(
+        r#"
+INSERT INTO meetings (date_time, location, describle, duration, participants)
+VALUES ('{}', '{}', '{}', {}, array{:?})
+RETURNING meeting_id;
+        "#,
+        create_data.date,
+        "unimplement",
+        create_data.desc,
+        create_data.duration,
+        create_data.participants
+    );
+    ret.push_str(&add_meeting_sql);
     serde_wasm_bindgen::to_value(&ret).unwrap()
 }
 
@@ -99,6 +112,6 @@ mod tests {
         let duration = duration_from_start();
         println!("{duration}");
         let date = "2023-08-22 17:28".to_string();
-        println!("{}", date_from_start(date))
+        println!("{}", date_from_start(&date))
     }
 }

@@ -4,6 +4,9 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { sql } from '@vercel/postgres';
 
 export const options: NextAuthOptions = {
+    session: {
+        strategy: "jwt",
+    },
     providers: [
         GitHubProvider({
             clientId: process.env.GITHUB_ID as string,
@@ -16,9 +19,9 @@ export const options: NextAuthOptions = {
                 password: { label: "Password", type: "password", placeholder: "your password" }
             },
             async authorize(credentials, req) {
-                const password = await sql`SELECT password FROM Users WHERE Name=${credentials?.username} LIMIT 1;`;
+                const password = await sql`SELECT id, password FROM Users WHERE Name=${credentials?.username} LIMIT 1;`;
                 if (credentials?.password === password.rows[0].password) {
-                    const user = { id: "0", name: credentials?.username }
+                    const user = { id: password.rows[0].id, name: credentials?.username }
                     return user
                 } else {
                     return null
