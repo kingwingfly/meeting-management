@@ -50,7 +50,9 @@ export default function MeetingsChoose({ chooses, postedData }: {
         }
     }
     useEffect(() => {
-        redirect("/dashboard/my")
+        if (isCreated) {
+            redirect("/dashboard/my")
+        }
     })
     if (isCreated) {
         return (
