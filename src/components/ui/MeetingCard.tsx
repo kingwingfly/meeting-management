@@ -1,11 +1,20 @@
-'use client'
-
 import Link from "next/link";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 
-export default function MeetingCard({ meeting, user_id }: { meeting: Meeting, user_id: number }) {
+export default function MeetingCard({ meeting, user_id, onRemoveing }: { meeting: Meeting, user_id: number, onRemoveing: CallableFunction }) {
     const [isSecond, setIsSecond] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [dateTime, setDateTime] = useState("");
+    useEffect(() => {
+        const utcDate = new Date(meeting.date_time);
+
+        const targetTimeZone = "Asia/Shanghai";
+        const formattedDate = utcDate.toLocaleString("zh-CH", { timeZone: targetTimeZone });
+
+        console.log("UTC Date:", utcDate.toISOString());
+        console.log(`Date in ${targetTimeZone} Time Zone:`, formattedDate);
+        setDateTime(formattedDate);
+    }, [meeting.date_time])
     async function handleDelete(e: MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         setIsSecond(true);
@@ -27,7 +36,7 @@ export default function MeetingCard({ meeting, user_id }: { meeting: Meeting, us
             let result = (await resp.json()).result as boolean;
             setIsDeleting(false);
             if (result) {
-                window.location.reload()
+                onRemoveing(meeting.meeting_id)
             }
         }
     }
@@ -37,7 +46,7 @@ export default function MeetingCard({ meeting, user_id }: { meeting: Meeting, us
                 <p className="font-semibold mb-2 text-xl">
                     Description: {meeting.describle}
                 </p>
-                <p className="mb-2">Date and Time: {new Date(meeting.date_time).toLocaleString()}</p>
+                <p className="mb-2">Date and Time: {dateTime}</p>
                 <p className="mb-2">Location: {meeting.location}</p>
                 <p className="mb-2">Duration: {meeting.duration} hours</p>
             </div>

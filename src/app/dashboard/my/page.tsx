@@ -10,12 +10,10 @@ export default async function MyPage() {
     let sql_ = `SELECT id FROM users WHERE name='${user_name}';`;
     let user_id = (await client.query(sql_)).rows[0].id;
     try {
-        sql_ = `SELECT meetings FROM users_meetings WHERE id=${user_id};`;
-        let meeting_ids = (await client.query(sql_)).rows[0].meetings as number[];
-        let meeting_ids_str = meeting_ids.map((num) => num.toString()).join(',');
-        sql_ = `SELECT meeting_id, date_time, location, describle, duration, participants FROM meetings WHERE meeting_id IN (${meeting_ids_str});`;
+        sql_ = `SELECT meeting_id, date_time, location, describle, duration, participants FROM meetings WHERE meeting_id IN (SELECT unnest(meetings) FROM users_meetings WHERE id = ${user_id});`;
+        console.log(sql_);
         let meetings = (await client.query(sql_)).rows;
-        // console.log(meetings);
+        console.log(meetings);
         const now = new Date();
         const upcomingMeetings = meetings.filter(
             meeting => new Date(meeting.date_time) > now

@@ -7,7 +7,7 @@ export default function MeetingsChoose({ chooses, postedData }: {
     chooses: { [key: string]: number },
     postedData: { duration: number, participants: number[], meetingType: string }
 }) {
-    let date = new Date(2023, 7, 21, 0, 0, 0);
+    let date = Date.UTC(2023, 7, 21, 0, 0, 0);
     const [selectedDateTime, setSelectedDateTime] = useState('');
     const [desc, setDesc] = useState('');
     const [isSencondClick, setIsSecondClick] = useState(false);
@@ -29,6 +29,7 @@ export default function MeetingsChoose({ chooses, postedData }: {
         setSelectedDateTime(formattedDate)
         setIsSecondClick(false);
     };
+    // console.log(selectedDateTime);
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setIsSecondClick(old => !old);
@@ -112,12 +113,12 @@ export default function MeetingsChoose({ chooses, postedData }: {
             <div className="grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-y-scroll flex-grow">
                 {Object.values(chooses).map((duration) => (
                     <div key={duration} className="choose">
-                        <div className="p-2 bg-white rounded hover:shadow hover:bg-gray-50 text-center cursor-pointer dark:bg-gray-500 dark:text-white dark:hover:bg-gray-400" onClick={(e) => handleDateClick(e)}>
+                        <div onClick={(e) => handleDateClick(e)} className="p-2 bg-white rounded hover:shadow hover:bg-gray-50 text-center cursor-pointer dark:bg-gray-500 dark:text-white dark:hover:bg-gray-400">
                             <div className="text-lg font-semibold m-1">
                                 {add(date, { hours: duration }).toLocaleString()}
                             </div>
                         </div>
-                        <div className="p-2 bg-white rounded shadow hover:bg-gray-50 text-center cursor-pointer dark:bg-gray-500 dark:text-white dark:hover:bg-gray-400" onClick={(e) => handleDateClick(e)}>
+                        <div onClick={(e) => handleDateClick(e)} className="p-2 bg-white rounded shadow hover:bg-gray-50 text-center cursor-pointer dark:bg-gray-500 dark:text-white dark:hover:bg-gray-400">
                             <div className="text-lg font-semibold m-1">
                                 {add(date, { hours: duration, minutes: 30 }).toLocaleString()}
                             </div>

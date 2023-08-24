@@ -6,7 +6,6 @@ export async function POST(req: NextRequest) {
     let data = await req.json();
     let client = await db.connect();
     const genData = newGenSqlData();
-    console.log(genData);
     genData.date = data.date as string;
     genData.desc = data.desc as string;
     genData.duration = Number(data.duration);
