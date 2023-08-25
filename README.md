@@ -94,8 +94,6 @@ Click the picture to experience the app.
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
-
 1. Clone the repo
    ```sh
    git clone https://github.com/kingwingfly/meeting-management.git
@@ -126,7 +124,7 @@ _Below is an example of how you can instruct your audience on installing and set
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] bug fix: the same sql sentence will get different results on different computer in different time zone.
+- [x] bug fix: the same sql sentence will get different results on different computer in different time zone.
 
 See the [open issues](https://github.com/kingwingfly/meeting-management/issues) for a full list of proposed features (and known issues).
 
