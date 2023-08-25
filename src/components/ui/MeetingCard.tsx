@@ -6,7 +6,7 @@ export default function MeetingCard({ meeting, user_id, onRemoveing }: { meeting
     const [isDeleting, setIsDeleting] = useState(false);
     const [dateTime, setDateTime] = useState("");
     useEffect(() => {
-        const utcDate = new Date(meeting.date_time);
+        const utcDate = new Date(meeting.date_time); // UTC from db
 
         const targetTimeZone = "Asia/Shanghai";
         const formattedDate = utcDate.toLocaleString("zh-CH", { timeZone: targetTimeZone });

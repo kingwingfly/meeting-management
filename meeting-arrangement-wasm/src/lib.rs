@@ -21,7 +21,7 @@ fn date_from_start(date: &str) -> (usize, String) {
         .unwrap()
         .with_timezone(&Utc);
     let duration = utc_datetime.signed_duration_since(start).num_hours();
-    (duration as usize, naive_datetime.to_string())
+    (duration as usize, utc_datetime.to_string())
 }
 
 #[derive(Deserialize, Serialize)]
@@ -71,7 +71,7 @@ pub fn new_sql_gen_data() -> JsValue {
 #[wasm_bindgen(js_name = "genSqls")]
 pub fn gen_sql(create_data: JsValue) -> JsValue {
     let create_data: CreateData = serde_wasm_bindgen::from_value(create_data).unwrap();
-    let (duration, date_string) = date_from_start(&create_data.date);
+    let (duration, utc_date_string) = date_from_start(&create_data.date);
     let occupied: Vec<usize> = (duration..(duration + create_data.duration)).collect();
     let mut ret = String::new();
     create_data.participants.iter().for_each(|id| {
@@ -94,7 +94,7 @@ INSERT INTO meetings (date_time, location, describle, duration, participants)
 VALUES ('{}', '{}', '{}', {}, array{:?})
 RETURNING meeting_id;
         "#,
-        date_string,
+        utc_date_string,
         "unimplement",
         create_data.desc,
         create_data.duration,
@@ -112,7 +112,7 @@ mod tests {
     fn test1() {
         let duration = duration_from_start();
         println!("{duration}");
-        let date = "2023-08-22 17:28".to_string();
+        let date = "2023-08-25 13:00".to_string();
         let (duration, date_string) = date_from_start(&date);
         println!("{}, {}", duration, date_string);
     }

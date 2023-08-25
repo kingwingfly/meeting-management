@@ -21,7 +21,7 @@
   <h3 align="center">Meeting Magement</h3>
 
   <p align="center">
-    impl though next.js, vercel, rust and wasm
+    impl through next.js, vercel, rust and wasm
     <br />
     <a href="https://github.com/kingwingfly/meeting-management"><strong>Explore the docs »</strong></a>
     <br />

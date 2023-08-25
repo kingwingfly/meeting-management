@@ -10,7 +10,7 @@ export default async function MyPage() {
     let sql_ = `SELECT id FROM users WHERE name='${user_name}';`;
     let user_id = (await client.query(sql_)).rows[0].id;
     try {
-        sql_ = `SELECT meeting_id, date_time, location, describle, duration, participants FROM meetings WHERE meeting_id IN (SELECT unnest(meetings) FROM users_meetings WHERE id = ${user_id});`;
+        sql_ = `SELECT meeting_id, date_time AT TIME ZONE 'UTC' AS date_time, location, describle, duration, participants FROM meetings WHERE meeting_id IN (SELECT unnest(meetings) FROM users_meetings WHERE id = ${user_id});`;
         console.log(sql_);
         let meetings = (await client.query(sql_)).rows;
         console.log(meetings);
